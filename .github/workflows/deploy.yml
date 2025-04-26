@@ -3,29 +3,29 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # ← mainブランチにpushしたら動く
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+      - main  # mainブランチにpushしたら動く
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v2  # リポジトリのコードを取得
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload files
-        uses: actions/upload-pages-artifact@v3
+      - name: Setup Node.js (必要な場合、例えばビルドのため)
+        uses: actions/setup-node@v2
         with:
-          path: .  # カレントディレクトリをアップロード
+          node-version: '16'
+
+      - name: Install dependencies (必要な場合、例えばビルドのため)
+        run: npm install
+
+      - name: Build project (必要な場合、例えばビルドのため)
+        run: npm run build  # 必要なビルドコマンドを実行
 
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          enviroment: production
+          branch: gh-pages  # GitHub Pagesのデプロイ先ブランチ
+          folder: ./dist  # ビルドしたファイルが保存されているフォルダ（ビルドが必要ない場合は、`./` にしてもOK）
